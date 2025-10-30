@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Playlists</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <h1>Playlists</h1>
+  <form method="POST">
+    <label>URL M3U:</label><br>
+    <input type="text" name="m3u_url" style="width:80%"><br>
+    <button type="submit">Abrir</button>
+  </form>
+  <a href="{{ url_for('index') }}">← Voltar</a>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Arquivos locais</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <h1>Arquivos locais</h1>
+  <a href="{{ url_for('index') }}">← Voltar</a>
+  <ul>
+    {% for f in files %}
+      <li>{{ f.category }} / {{ f.name }} — <a href="{{ f.url }}">Abrir</a></li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>{{ category_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <h1>{{ category_name }}</h1>
+  <a href="{{ url_for('index') }}">← Voltar</a>
+  <ul>
+    {% for item in items %}
+      <li>
+        {{ item.name }} — <a href="{{ url_for('player', url=item.url, name=item.name, category=category_name) }}">Assistir</a>
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

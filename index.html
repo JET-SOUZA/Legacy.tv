@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Legacy.iptv</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Legacy.iptv</h1>
+    <nav>
+      <a href="{{ url_for('logout') }}">Sair</a> |
+      <a href="{{ url_for('admin_panel') }}">Admin</a> |
+      <a href="{{ url_for('playlist') }}">Playlists</a> |
+      <a href="{{ url_for('local_files') }}">Arquivos locais</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Categorias</h2>
+    <ul>
+      {% for c in categories %}
+        <li><a href="{{ url_for('category', category_name=c) }}">{{ c }}</a></li>
+      {% endfor %}
+    </ul>
+  </main>
+</body>
+</html>

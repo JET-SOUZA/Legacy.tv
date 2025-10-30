@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Player</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { font-family: Arial, sans-serif; background: #000; color: #fff; text-align: center; padding: 20px; }
+        h1 { color: #fff; }
+        .meta { margin-top: 10px; color: #ddd; }
+        video { width: 90%; max-width: 1000px; height: auto; margin-top: 20px; border: 2px solid #fff; border-radius: 8px; }
+        a { color: #fff; display: block; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Player IPTV</h1>
+    <div class="meta">
+        <strong>{{ name }}</strong> — <em>{{ category }}</em>
+    </div>
+
+    {% if stream_url %}
+        <video controls autoplay>
+            <source src="{{ stream_url }}" type="application/x-mpegURL">
+            Seu navegador não suporta este tipo de vídeo.
+        </video>
+    {% else %}
+        <p>Nenhum stream disponível.</p>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}">← Voltar ao início</a>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Painel Admin</h1>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="flash">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <h2>Criar novo usuário</h2>
+    <form method="POST" action="{{ url_for('admin_create_user') }}">
+        <label>Username:</label><br>
+        <input type="text" name="username" required><br>
+        <label>Senha:</label><br>
+        <input type="text" name="password" required><br>
+        <label>Servidor Xtream:</label><br>
+        <input type="text" name="server" placeholder="Ex: http://meuservidor.com:8080" required><br>
+        <label>Premium:</label>
+        <input type="checkbox" name="premium"><br>
+        <label>Admin:</label>
+        <input type="checkbox" name="is_admin"><br>
+        <label>Expiração (horas, opcional):</label><br>
+        <input type="number" name="expires_hours" min="1"><br>
+        <button type="submit">Criar Usuário</button>
+    </form>
+
+    <h2>Usuários existentes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Premium</th>
+                <th>Admin</th>
+                <th>Expiração</th>
+                <th>Servidor</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user['id'] }}</td>
+                <td>{{ user['username'] }}</td>
+                <td>{{ 'Sim' if user['premium'] else 'Não' }}</td>
+                <td>{{ 'Sim' if user['is_admin'] else 'Não' }}</td>
+                <td>{{ user['expires_at'] if user['expires_at'] else '-' }}</td>
+                <td>{{ user['server'] if user['server'] else '-' }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('admin_delete_user', user_id=user['id']) }}" style="display:inline">
+                        <button type="submit" onclick="return confirm('Deletar usuário?')">Deletar</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin_toggle_premium', user_id=user['id']) }}" style="display:inline">
+                        <button type="submit">Toggle Premium</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin_set_expiry', user_id=user['id']) }}" style="display:inline">
+                        <input type="number" name="expires_hours" placeholder="Horas">
+                        <button type="submit">Definir Expiração</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <a href="{{ url_for('logout') }}">Sair</a>
+</body>
+</html>
