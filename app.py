@@ -95,8 +95,13 @@ def reload_playlist():
     return redirect(url_for("index"))
 
 # ================================
-# ROTA DE STATUS
+# NOVAS ROTAS (correção premium)
 # ================================
+@app.route("/register")
+def register():
+    """Página de cadastro (caso exista o template register.html)"""
+    return render_template("register.html")
+
 @app.route("/status")
 def status():
     return {"ok": True, "total_canais": len(canais), "ultima_atualizacao": str(datetime.now())}
