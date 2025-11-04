@@ -3,128 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ titulo or "Legacy.TV" }}</title>
+    <title>{{ titulo or "Legacy TV" }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: #fff;
             margin: 0;
-            padding: 0;
+            font-family: "Poppins", sans-serif;
+            background: radial-gradient(circle at top, #0f172a, #000);
+            color: #fff;
+            min-height: 100vh;
         }
-
         header {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px 0;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            padding: 15px;
             text-align: center;
-            font-size: 26px;
+            font-size: 1.4em;
+            font-weight: 600;
             letter-spacing: 1px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #00bcd4;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-
         nav {
+            background: #111827;
             text-align: center;
-            background: rgba(0, 0, 0, 0.6);
             padding: 10px;
         }
-
         nav a {
-            color: #fff;
+            color: #e5e7eb;
             text-decoration: none;
             margin: 0 12px;
             font-weight: 500;
-            transition: color 0.2s;
+            transition: color 0.3s;
         }
-
         nav a:hover {
-            color: #00bcd4;
+            color: #3b82f6;
         }
-
         .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 25px;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 15px;
+        }
+        h2 {
+            text-align: center;
+            color: #3b82f6;
+            margin-bottom: 25px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px;
         }
-
         .card {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            width: 220px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.3s, box-shadow 0.3s;
-            overflow: hidden;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-        }
-
-        .card img {
-            width: 100%;
-            height: 130px;
-            object-fit: cover;
-        }
-
-        .card-content {
-            padding: 12px;
+            background: #1e293b;
+            border-radius: 10px;
+            padding: 15px;
             text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: transform 0.2s, box-shadow 0.3s;
         }
-
-        .card-content h3 {
-            font-size: 18px;
+        .card:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+        }
+        .card h3 {
+            color: #e2e8f0;
+            font-size: 1.1em;
             margin-bottom: 10px;
         }
-
-        .card-content a {
+        .card a {
             display: inline-block;
-            background: #00bcd4;
-            color: #fff;
-            text-decoration: none;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            color: white;
             padding: 8px 14px;
             border-radius: 6px;
-            transition: background 0.3s;
+            text-decoration: none;
+            font-weight: 500;
         }
-
-        .card-content a:hover {
-            background: #0097a7;
+        .card a:hover {
+            background: linear-gradient(90deg, #2563eb, #0891b2);
         }
-
         footer {
             text-align: center;
             padding: 20px;
-            font-size: 14px;
-            color: #bbb;
-            background: rgba(0,0,0,0.4);
+            color: #9ca3af;
+            background: #0f172a;
+            margin-top: 40px;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
-    <header>Legacy.TV</header>
 
-    <nav>
-        <a href="{{ url_for('index') }}">Início</a>
-        <a href="{{ url_for('play') }}">Player</a>
-        <a href="{{ url_for('playlist') }}">Playlists</a>
-        <a href="{{ url_for('logout') }}">Sair</a>
-    </nav>
+<header>📺 Legacy TV</header>
 
-    <div class="container">
-        {% for canal in canais %}
-        <div class="card">
-            <img src="https://img.freepik.com/free-vector/gradient-tv-logo-template_23-2149372726.jpg?w=740" alt="Canal">
-            <div class="card-content">
-                <h3>{{ canal['nome'] }}</h3>
-                <a href="{{ url_for('play', id=canal['id']) }}">Assistir</a>
-            </div>
+<nav>
+    <a href="{{ url_for('index') }}"><i class="fa fa-home"></i> Início</a> |
+    <a href="{{ url_for('register') }}"><i class="fa fa-user-plus"></i> Cadastro</a> |
+    {% if canais %}
+        <a href="{{ url_for('play', id=canais[0].id) }}"><i class="fa fa-play-circle"></i> Player</a> |
+    {% endif %}
+    <a href="https://t.me/legacytv" target="_blank"><i class="fab fa-telegram"></i> Suporte</a>
+</nav>
+
+<div class="container">
+    <h2>{{ titulo or "Canais Disponíveis" }}</h2>
+    {% if canais %}
+        <div class="grid">
+            {% for canal in canais %}
+                <div class="card">
+                    <h3>{{ canal.nome }}</h3>
+                    <a href="{{ url_for('play', id=canal.id) }}"><i class="fa fa-play"></i> Assistir</a>
+                </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
+    {% else %}
+        <p style="text-align:center;">Nenhum canal disponível no momento.</p>
+    {% endif %}
+</div>
 
-    <footer>© 2025 Legacy.TV — Plataforma Premium de Streaming</footer>
+<footer>
+    © {{ 2025 }} Legacy TV - Todos os direitos reservados.<br>
+    Painel desenvolvido para uso Premium com integração segura.
+</footer>
+
 </body>
 </html>
