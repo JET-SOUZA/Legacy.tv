@@ -1,14 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, session, g
+from flask import Flask, render_template, request, redirect, url_for, session, g, flash
 import sqlite3
 import os
+import requests
 
 app = Flask(__name__)
 app.secret_key = "legacytv_secret_2025"
 
-# Caminho do banco SQLite
-DB_PATH = os.path.join(os.path.dirname(__file__), "users.db")
+# =====================================================
+# 🔹 CONFIGURAÇÃO DO BANCO DE DADOS (compatível com Render)
+# =====================================================
+os.makedirs("/tmp/db", exist_ok=True)
+DB_PATH = "/tmp/db/users.db"
 
-# -------- Função para conectar ao banco --------
 def get_db():
     if "db" not in g:
         g.db = sqlite3.connect(DB_PATH)
@@ -21,7 +24,6 @@ def close_db(error):
     if db is not None:
         db.close()
 
-# -------- Inicializa o banco se não existir --------
 def init_db():
     with app.app_context():
         db = get_db()
@@ -36,35 +38,69 @@ def init_db():
 
 init_db()
 
-# -------- Página inicial --------
-@app.route("/")
-def index():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-    
-    # Exemplo de lista de canais (pode ser carregada de uma M3U)
-    canais = [
-        {"id": 1, "nome": "Canal Esportes", "link": "https://example.com/stream1.m3u8"},
-        {"id": 2, "nome": "Canal Filmes", "link": "https://example.com/stream2.m3u8"},
-        {"id": 3, "nome": "Canal Séries", "link": "https://example.com/stream3.m3u8"},
-    ]
-    return render_template("index.html", canais=canais)
+# --- Cria admin padrão se não existir ---
+def create_admin():
+    with app.app_context():
+        db = get_db()
+        admin = db.execute("SELECT * FROM users WHERE username = ?", ("admin",)).fetchone()
+        if not admin:
+            db.execute("INSERT INTO users (username, password) VALUES (?, ?)", ("admin", "admin123"))
+            db.commit()
+            print("✅ Usuário admin criado com sucesso (admin / admin123)")
 
-# -------- Página de player --------
-@app.route("/play/<int:canal_id>")
-def play(canal_id):
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-    
-    canais = [
-        {"id": 1, "nome": "Canal Esportes", "link": "https://example.com/stream1.m3u8"},
-        {"id": 2, "nome": "Canal Filmes", "link": "https://example.com/stream2.m3u8"},
-        {"id": 3, "nome": "Canal Séries", "link": "https://example.com/stream3.m3u8"},
-    ]
-    canal = next((c for c in canais if c["id"] == canal_id), None)
-    return render_template("player.html", canal=canal)
+create_admin()
 
-# -------- Página de registro --------
+# =====================================================
+# 🔹 PLAYLIST M3U
+# =====================================================
+PLAYLIST_URL = "https://raw.githubusercontent.com/JET-SOUZA/Legacy.tv/refs/heads/main/playlist_djy7adcm_ts"
+
+def carregar_canais():
+    canais = []
+    try:
+        r = requests.get(PLAYLIST_URL, timeout=10)
+        if r.status_code == 200:
+            linhas = r.text.splitlines()
+            canal = {}
+            for linha in linhas:
+                if linha.startswith("#EXTINF"):
+                    nome = linha.split(",")[-1].strip()
+                    canal["name"] = nome
+                elif linha.startswith("http"):
+                    canal["url"] = linha.strip()
+                    canal["id"] = len(canais) + 1
+                    canais.append(canal)
+                    canal = {}
+    except Exception as e:
+        print("❌ Erro ao carregar playlist:", e)
+    return canais
+
+canais = carregar_canais()
+
+# =====================================================
+# 🔹 ROTAS DE LOGIN / REGISTRO
+# =====================================================
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        db = get_db()
+        user = db.execute(
+            "SELECT * FROM users WHERE username = ? AND password = ?",
+            (username, password)
+        ).fetchone()
+
+        if user:
+            session["user"] = username
+            return redirect(url_for("index"))
+        else:
+            return "Usuário ou senha incorretos."
+
+    return render_template("login.html")
+
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -75,44 +111,65 @@ def register():
         try:
             db.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
             db.commit()
+            flash("Usuário criado com sucesso! Faça login.")
             return redirect(url_for("login"))
         except sqlite3.IntegrityError:
-            return "Usuário já existe!"
+            flash("Nome de usuário já existe.")
+            return redirect(url_for("register"))
 
     return render_template("register.html")
 
-# -------- Página de login --------
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
 
-        db = get_db()
-        user = db.execute(
-            "SELECT * FROM users WHERE username = ? AND password = ?", (username, password)
-        ).fetchone()
-
-        if user:
-            session["user_id"] = user["id"]
-            session["username"] = user["username"]
-            return redirect(url_for("index"))
-        else:
-            return "Usuário ou senha incorretos."
-
-    return render_template("login.html")
-
-# -------- Logout --------
 @app.route("/logout")
 def logout():
-    session.clear()
+    session.pop("user", None)
+    flash("Você saiu da conta.")
     return redirect(url_for("login"))
 
-# -------- Healthcheck --------
-@app.route("/health")
-def health():
-    return {"ok": True}
 
-# -------- Execução --------
+# =====================================================
+# 🔹 ROTAS PRINCIPAIS
+# =====================================================
+@app.route("/")
+def index():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("index.html", canais=canais, titulo="Canais Disponíveis")
+
+
+@app.route("/play/<int:id>")
+def play(id):
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    canal = next((c for c in canais if c["id"] == id), None)
+    if not canal:
+        flash("Canal não encontrado.")
+        return redirect(url_for("index"))
+    return render_template("player.html", canal=canal)
+
+
+@app.route("/reload")
+def reload_playlist():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    global canais
+    canais = carregar_canais()
+    flash("Playlist recarregada com sucesso.")
+    return redirect(url_for("index"))
+
+
+# =====================================================
+# 🔹 STATUS (API)
+# =====================================================
+@app.route("/status")
+def status():
+    return {"ok": True, "total_canais": len(canais)}
+
+
+# =====================================================
+# 🔹 EXECUÇÃO LOCAL
+# =====================================================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 10000)), debug=True)
