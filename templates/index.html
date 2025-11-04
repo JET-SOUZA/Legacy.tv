@@ -1,129 +1,148 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ titulo or "Legacy TV" }}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body {
-            margin: 0;
-            font-family: "Poppins", sans-serif;
-            background: radial-gradient(circle at top, #0f172a, #000);
-            color: #fff;
-            min-height: 100vh;
-        }
-        header {
-            background: linear-gradient(90deg, #3b82f6, #06b6d4);
-            padding: 15px;
-            text-align: center;
-            font-size: 1.4em;
-            font-weight: 600;
-            letter-spacing: 1px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        nav {
-            background: #111827;
-            text-align: center;
-            padding: 10px;
-        }
-        nav a {
-            color: #e5e7eb;
-            text-decoration: none;
-            margin: 0 12px;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        nav a:hover {
-            color: #3b82f6;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 15px;
-        }
-        h2 {
-            text-align: center;
-            color: #3b82f6;
-            margin-bottom: 25px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
-        .card {
-            background: #1e293b;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            transition: transform 0.2s, box-shadow 0.3s;
-        }
-        .card:hover {
-            transform: scale(1.04);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.5);
-        }
-        .card h3 {
-            color: #e2e8f0;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-        .card a {
-            display: inline-block;
-            background: linear-gradient(90deg, #3b82f6, #06b6d4);
-            color: white;
-            padding: 8px 14px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .card a:hover {
-            background: linear-gradient(90deg, #2563eb, #0891b2);
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #9ca3af;
-            background: #0f172a;
-            margin-top: 40px;
-            font-size: 0.9em;
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Jet TV - Canais</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Fonte e Ícones -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #111;
+      color: #00bcd4;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    header nav a {
+      color: #00bcd4;
+      text-decoration: none;
+      margin-left: 15px;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    header nav a:hover {
+      color: #fff;
+    }
+
+    .container {
+      flex: 1;
+      padding: 30px;
+    }
+
+    h2 {
+      color: #00bcd4;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #181818;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
+
+    .card h3 {
+      margin: 10px 0;
+      font-size: 1.1rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 8px;
+      background: #00bcd4;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #0097a7;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 0.9rem;
+      color: #aaa;
+      background: #111;
+      margin-top: auto;
+    }
+  </style>
 </head>
 <body>
 
-<header>📺 Legacy TV</header>
+  <header>
+    <h1><i class="fa-solid fa-tv"></i> Jet TV</h1>
+    <nav>
+      <a href="{{ url_for('reload_playlist') }}"><i class="fa-solid fa-rotate"></i> Atualizar</a>
+      <a href="{{ url_for('register') }}"><i class="fa fa-user-plus"></i> Cadastro</a>
+      <a href="{{ url_for('login') }}"><i class="fa fa-sign-in-alt"></i> Login</a>
+    </nav>
+  </header>
 
-<nav>
-    <a href="{{ url_for('index') }}"><i class="fa fa-home"></i> Início</a> |
-    <a href="{{ url_for('register') }}"><i class="fa fa-user-plus"></i> Cadastro</a> |
-    {% if canais %}
-        <a href="{{ url_for('play', id=canais[0].id) }}"><i class="fa fa-play-circle"></i> Player</a> |
-    {% endif %}
-    <a href="https://t.me/legacytv" target="_blank"><i class="fab fa-telegram"></i> Suporte</a>
-</nav>
+  <div class="container">
+    <h2>{{ titulo }}</h2>
 
-<div class="container">
-    <h2>{{ titulo or "Canais Disponíveis" }}</h2>
-    {% if canais %}
-        <div class="grid">
-            {% for canal in canais %}
-                <div class="card">
-                    <h3>{{ canal.nome }}</h3>
-                    <a href="{{ url_for('play', id=canal.id) }}"><i class="fa fa-play"></i> Assistir</a>
-                </div>
-            {% endfor %}
+    <div class="cards-container">
+      {% for canal in canais %}
+        <div class="card">
+          <h3>{{ canal.name }}</h3>
+          <a href="{{ url_for('play', id=canal.id) }}" class="btn">
+            🎥 Assistir
+          </a>
         </div>
-    {% else %}
+      {% else %}
         <p style="text-align:center;">Nenhum canal disponível no momento.</p>
-    {% endif %}
-</div>
+      {% endfor %}
+    </div>
+  </div>
 
-<footer>
-    © {{ 2025 }} Legacy TV - Todos os direitos reservados.<br>
-    Painel desenvolvido para uso Premium com integração segura.
-</footer>
+  <footer>
+    <p>🚀 Jet TV © 2025 - Todos os direitos reservados</p>
+  </footer>
 
 </body>
 </html>
